@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CupRider — Ride Any World Cup Curve | Stonkrider-style Football Game</title>
+  <meta name="description" content="CupRider — Stonkrider-style football edition. Ride World Cup curves, FIFA rankings, and player goal tallies like a motocross track. Try not to crash!"/>
+
+  <!-- Open Graph / Social Sharing -->
+  <meta property="og:type" content="website"/>
+  <meta property="og:url" content="https://cuprider.com/"/>
+  <meta property="og:title" content="CupRider — Ride Football Data Like a Motocross Track"/>
+  <meta property="og:description" content="Race through World Cup history, FIFA rankings & legendary upsets. Jump, score, and try not to crash!"/>
+  <meta property="og:image" content="https://cuprider.com/icons/icon.svg"/>
+  <meta name="twitter:card" content="summary_large_image"/>
+  <meta name="twitter:title" content="CupRider — Ride Football Data Curves"/>
+  <meta name="twitter:description" content="A Stonkrider-style football game. Pick a track and ride the data!"/>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;600;700;800&display=swap" rel="stylesheet"/>
+  <link rel="manifest" href="/manifest.webmanifest"/>
+  <meta name="theme-color" content="#111114"/>
+  <link rel="icon" href="/icons/icon.svg" type="image/svg+xml"/>
+  <link rel="apple-touch-icon" href="/icons/icon.svg"/>
+  <link rel="stylesheet" href="/src/style.css"/>
+</head>
+<body>
+  <div id="app">
+    <!-- LOADING OVERLAY -->
+    <div id="loading-overlay" class="loading-overlay">
+      <div class="loader-ring"></div>
+      <p class="loader-text">Loading tracks...</p>
+    </div>
+
+    <!-- NAV -->
+    <nav class="nav">
+      <a href="/" class="logo">
+        <span class="logo-icon">⚽</span>
+        <span class="logo-text">CupRider</span>
+      </a>
+      <div class="nav-links">
+        <a href="#trending" class="nav-link">Tracks</a>
+        <a href="#legendary" class="nav-link">Legendary</a>
+        <a href="https://stonkrider.com" class="nav-link stonk-link" target="_blank" rel="noopener">
+          📈 Stonkrider Fans → Stock Mode
+        </a>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section class="hero">
+      <p class="overline">⚽ Motocross meets the Pitch</p>
+      <h1>Ride any World Cup curve.</h1>
+      <div class="hero-subtitle">pick a track — try not to crash.</div>
+
+      <!-- STATS -->
+      <div id="live-stats" class="stats-row">
+        <div class="stat">
+          <span class="stat-number" id="stat-rides">12,847</span>
+          <span class="stat-label">rides completed</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number" id="stat-goals">⚽ 94,211</span>
+          <span class="stat-label">virtual goals scored</span>
+        </div>
+        <div class="stat">
+          <span class="stat-number" id="stat-crashes">38,419</span>
+          <span class="stat-label">spectacular crashes</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- DAILY CHALLENGE -->
+    <section id="daily-banner" class="daily-banner">
+      <span class="daily-badge">🏆 DAILY CHALLENGE</span>
+      <span id="daily-ticker" class="daily-ticker">ARG · WC 2022 Final xG Curve</span>
+      <span id="daily-meta" class="daily-meta">Best: 142,300 pts by goat_messi10 · 89 riders today</span>
+      <button id="daily-cta" class="btn-primary" onclick="startGame('WC2022')">Ride today's challenge</button>
+    </section>
+
+    <!-- SEARCH -->
+    <section class="search-section" id="trending">
+      <form id="search-form" class="search-form" onsubmit="handleSearch(event)">
+        <input type="text" id="search-input" placeholder="Search any team, player, or match..." autocomplete="off"/>
+        <button type="submit" id="search-btn" class="btn-primary">⚽ Ride</button>
+      </form>
+      <div id="search-dropdown" class="search-dropdown hidden"></div>
+
+      <h2 class="section-title">🔥 Trending Tracks</h2>
+      <div class="ticker-grid" id="ticker-grid"></div>
+    </section>
+
+    <!-- LEGENDARY CRASHES -->
+    <section class="legendary-section" id="legendary">
+      <h2 class="section-title">💀 Legendary Crashes & Upsets</h2>
+      <p class="section-sub">The most dramatic collapses and giant killings in World Cup history. Can you survive these curves?</p>
+      <div class="ticker-grid" id="crash-grid"></div>
+    </section>
+
+    <!-- 2026 BANNER -->
+    <section class="wc2026-banner">
+      <h2>🏟️ FIFA World Cup 2026 Mode — Coming Soon</h2>
+      <p>Real-time match xG curves, live possession tracks, and tournament brackets. USA · Mexico · Canada.</p>
+      <button class="btn-primary btn-large" onclick="alert('🎉 You\'ll be notified when WC 2026 mode launches!')">Notify Me</button>
+    </section>
+
+    <!-- CROSS-PROMO -->
+    <section class="cross-promo">
+      <p>🎮 Love riding data curves? Try the OG:</p>
+      <a href="https://stonkrider.com" target="_blank" class="btn-outline">📈 Stonkrider — Ride Stock Charts</a>
+      <span class="cross-sep">or</span>
+      <button class="btn-outline" onclick="document.getElementById('search-input').focus()">⚽ Keep riding football curves</button>
+    </section>
+
+    <!-- FOOTER -->
+    <footer class="footer">
+      <p>CupRider © 2025 — An independent football data game inspired by <a href="https://stonkrider.com" target="_blank">Stonkrider</a></p>
+      <p class="footer-sub">Data: FIFA, Football-Data.org, API-Football · Not affiliated with FIFA or Stonkrider</p>
+    </footer>
+
+    <!-- GAME MODAL -->
+    <div id="game-modal" class="game-modal hidden">
+      <div class="game-header">
+        <div class="game-info">
+          <span id="game-track-name" class="game-track-name">ARG</span>
+          <span id="game-track-sub" class="game-track-sub">Argentina · FIFA Ranking</span>
+        </div>
+        <div class="game-stats">
+          <div class="game-stat"><span class="game-stat-label">SCORE</span><span id="game-score">0</span></div>
+          <div class="game-stat"><span class="game-stat-label">SPEED</span><span id="game-speed">0</span></div>
+          <div class="game-stat"><span class="game-stat-label">HEIGHT</span><span id="game-height">0</span></div>
+        </div>
+        <button class="btn-close" onclick="closeGame()">✕</button>
+      </div>
+      <canvas id="game-canvas"></canvas>
+      <div id="game-over-overlay" class="game-over hidden">
+        <h2 id="game-over-title">💥 CRASH!</h2>
+        <p id="game-over-score">Score: 0</p>
+        <button class="btn-primary btn-large" onclick="restartGame()">🔁 Ride Again</button>
+        <button class="btn-outline" onclick="closeGame()">Back to Tracks</button>
+      </div>
+      <div id="goal-effect" class="goal-effect hidden">⚽ GOOOAL!</div>
+    </div>
+  </div>
+
+  <script src="/src/app.js"></script>
+</body>
+</html>

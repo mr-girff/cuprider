@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#1B5E20"/>
+      <stop offset="100%" stop-color="#111114"/>
+    </linearGradient>
+  </defs>
+  <rect width="512" height="512" rx="100" fill="url(#bg)"/>
+  <!-- Football outline -->
+  <circle cx="256" cy="256" r="160" fill="#fff" stroke="#2ECC71" stroke-width="8"/>
+  <!-- Pentagon pattern on football -->
+  <polygon points="256,140 300,176 286,228 226,228 212,176" fill="#333" stroke="#333" stroke-width="4"/>
+  <polygon points="256,140 300,176 320,220 280,250 226,228 212,176" fill="none" stroke="#333" stroke-width="4"/>
+  <polygon points="300,176 380,180 360,230 320,220" fill="none" stroke="#333" stroke-width="4"/>
+  <polygon points="212,176 132,180 150,230 226,228" fill="none" stroke="#333" stroke-width="4"/>
+  <polygon points="380,180 340,290 360,230" fill="none" stroke="#333" stroke-width="4"/>
+  <polygon points="132,180 170,290 150,230" fill="none" stroke="#333" stroke-width="4"/>
+  <polygon points="340,290 256,370 280,250" fill="none" stroke="#333" stroke-width="4"/>
+  <polygon points="170,290 256,370 226,228" fill="none" stroke="#333" stroke-width="4"/>
+  <!-- Speed lines -->
+  <line x1="420" y1="100" x2="480" y2="40" stroke="#5DCAA5" stroke-width="6" stroke-linecap="round"/>
+  <line x1="440" y1="130" x2="490" y2="80" stroke="#5DCAA5" stroke-width="4" stroke-linecap="round"/>
+  <!-- C (CupRider initial) -->
+  <text x="256" y="470" text-anchor="middle" font-family="DM Sans,sans-serif" font-weight="800" font-size="48" fill="#5DCAA5">CUP</text>
+</svg>

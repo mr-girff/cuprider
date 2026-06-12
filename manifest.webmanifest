@@ -1,0 +1,17 @@
+{
+  "name": "CupRider",
+  "short_name": "CupRider",
+  "description": "Ride any World Cup curve like a motocross track. Football meets extreme sports!",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#111114",
+  "theme_color": "#111114",
+  "icons": [
+    {
+      "src": "/icons/icon.svg",
+      "sizes": "any",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
+}
