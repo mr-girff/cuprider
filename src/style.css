@@ -124,6 +124,20 @@ h1{font-size:clamp(2.2rem,5vw,3.8rem);font-weight:800;margin-bottom:8px;backgrou
 .game-over.hidden{display:none}
 .game-over h2{font-size:2.5rem}
 .game-over p{font-size:1.2rem;color:var(--text-dim)}
+.submit-score{display:flex;flex-direction:column;align-items:center;gap:10px;margin:8px 0;width:100%;max-width:320px}
+.submit-score.hidden{display:none}
+.name-input{background:var(--bg);border:1px solid var(--border);color:var(--text);font-family:var(--font);font-size:0.9rem;padding:8px 14px;border-radius:8px;outline:none;width:200px;text-align:center;transition:border-color 0.2s}
+.name-input:focus{border-color:var(--accent)}
+.btn-small{padding:8px 18px;font-size:0.85rem}
+.leaderboard-mini{width:100%;max-height:200px;overflow-y:auto;background:rgba(0,0,0,0.3);border-radius:8px;padding:8px 12px}
+.leaderboard-mini.hidden{display:none}
+.lb-mini-title{font-size:0.75rem;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;text-align:center}
+.lb-mini-entry{display:flex;justify-content:space-between;align-items:center;padding:3px 0;font-size:0.8rem;border-bottom:1px solid rgba(255,255,255,0.04)}
+.lb-mini-entry:last-child{border-bottom:none}
+.lb-rank{color:var(--accent);font-weight:800;min-width:20px}
+.lb-name{color:var(--text);flex:1;margin-left:8px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.lb-score{color:var(--accent-green);font-weight:700}
+.lb-medal{font-size:0.9rem}
 
 /* GOAL EFFECT */
 .goal-effect{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);font-size:3rem;font-weight:800;color:var(--accent-green);text-shadow:0 0 40px rgba(46,204,113,0.6);pointer-events:none;animation:goalPulse 1.2s ease-out forwards;z-index:20}

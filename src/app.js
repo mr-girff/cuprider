@@ -12,20 +12,38 @@ function hideLoading() {
   if (overlay) overlay.classList.add('hidden');
 }
 
-/* ── STATS COUNTER ANIMATION ── */
+/* ── STATS COUNTER ANIMATION (from API) ── */
 
-function animateStats() {
-  const targets = [
+async function animateStats() {
+  try {
+    const res = await fetch('/api/stats');
+    if (res.ok) {
+      const data = await res.json();
+      const targets = [
+        { el: document.getElementById('stat-rides'), target: data.totalRides || 12847, prefix: '' },
+        { el: document.getElementById('stat-goals'), target: data.totalGoals || 94211, prefix: '⚽ ' },
+        { el: document.getElementById('stat-crashes'), target: data.totalCrashes || 38419, prefix: '' }
+      ];
+      animateCounter(targets);
+      return;
+    }
+  } catch (e) { /* fallback to hardcoded */ }
+
+  // Fallback if API unavailable
+  const fallback = [
     { el: document.getElementById('stat-rides'), target: 12847, prefix: '' },
     { el: document.getElementById('stat-goals'), target: 94211, prefix: '⚽ ' },
     { el: document.getElementById('stat-crashes'), target: 38419, prefix: '' }
   ];
+  animateCounter(fallback);
+}
+
+function animateCounter(targets) {
   const duration = 2000;
   const start = performance.now();
-
   function tick(now) {
     const t = Math.min((now - start) / duration, 1);
-    const ease = 1 - Math.pow(1 - t, 3); // ease-out cubic
+    const ease = 1 - Math.pow(1 - t, 3);
     for (const { el, target, prefix } of targets) {
       if (el) el.textContent = prefix + Math.floor(ease * target).toLocaleString();
     }
@@ -526,6 +544,7 @@ class CupRiderGame {
     document.getElementById('game-over-title').textContent = '💥 CRASH!';
     document.getElementById('game-over-score').textContent = `Score: ${this.score.toLocaleString()} · Goals: ${this.goalCount}`;
     document.getElementById('game-over-overlay').classList.remove('hidden');
+    this.showSubmitScore(false);
   }
 
   finish() {
@@ -535,6 +554,19 @@ class CupRiderGame {
     document.getElementById('game-over-title').textContent = '🏆 TRACK COMPLETE!';
     document.getElementById('game-over-score').textContent = `Score: ${this.score.toLocaleString()} · Goals: ${this.goalCount}`;
     document.getElementById('game-over-overlay').classList.remove('hidden');
+    this.showSubmitScore(true);
+  }
+
+  showSubmitScore(completed) {
+    _lastGameResult = {
+      trackKey: window._currentTrackKey,
+      score: this.score,
+      goals: this.goalCount,
+      completed
+    };
+    document.getElementById('submit-score-area').classList.remove('hidden');
+    // Focus name input after a short delay
+    setTimeout(() => document.getElementById('player-name').focus(), 300);
   }
 
   destroy() {
@@ -561,6 +593,11 @@ function startGame(trackKey) {
   document.getElementById('game-over-overlay').classList.add('hidden');
   document.getElementById('goal-effect').classList.add('hidden');
   document.getElementById('game-modal').classList.remove('hidden');
+  document.getElementById('submit-score-area').classList.add('hidden');
+  document.getElementById('leaderboard-mini').classList.add('hidden');
+  document.getElementById('player-name').disabled = false;
+  document.getElementById('player-name').value = '';
+  _lastGameResult = null;
 
   const canvas = document.getElementById('game-canvas');
   currentGame = new CupRiderGame(canvas, track);
@@ -581,6 +618,69 @@ function restartGame() {
   if (window._currentTrackKey) startGame(window._currentTrackKey);
 }
 
+/* ── SCORE SUBMISSION & LEADERBOARD ── */
+
+let _lastGameResult = null;
+
+async function submitScore() {
+  const nameInput = document.getElementById('player-name');
+  const name = nameInput.value.trim() || 'Anonymous';
+  const btn = document.querySelector('#submit-score-area .btn-primary');
+  btn.disabled = true;
+  btn.textContent = 'Saving...';
+
+  try {
+    const res = await fetch('/api/score', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        trackKey: _lastGameResult.trackKey,
+        playerName: name,
+        score: _lastGameResult.score,
+        goals: _lastGameResult.goals,
+        completed: _lastGameResult.completed
+      })
+    });
+    const data = await res.json();
+    if (data.ok && data.leaderboard) {
+      renderMiniLeaderboard(data.leaderboard);
+      document.getElementById('leaderboard-mini').classList.remove('hidden');
+      nameInput.disabled = true;
+      btn.textContent = '✅ Saved!';
+    } else {
+      btn.textContent = '⚠️ Error';
+    }
+  } catch (e) {
+    btn.textContent = '⚠️ Error';
+  }
+}
+
+async function fetchLeaderboard(trackKey) {
+  try {
+    const res = await fetch(`/api/leaderboard?track=${encodeURIComponent(trackKey)}`);
+    if (res.ok) return await res.json();
+  } catch (e) { /* ignore */ }
+  return [];
+}
+
+function renderMiniLeaderboard(entries) {
+  const list = document.getElementById('lb-mini-list');
+  if (!entries || !entries.length) {
+    list.innerHTML = '<p style="color:var(--text-dim);font-size:0.8rem;text-align:center">No scores yet. Be the first!</p>';
+    return;
+  }
+  list.innerHTML = entries.map((e, i) => {
+    const medal = i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `<span class="lb-rank">#${i + 1}</span>`;
+    return `<div class="lb-mini-entry">${medal}<span class="lb-name">${escHtml(e.name)}</span><span class="lb-score">${e.score.toLocaleString()}</span></div>`;
+  }).join('');
+}
+
+function escHtml(str) {
+  const div = document.createElement('div');
+  div.textContent = str;
+  return div.innerHTML;
+}
+
 const _resizeHandler = () => {
   if (currentGame && currentGame.running) currentGame.resize();
 };
@@ -591,6 +691,15 @@ window.startGame = startGame;
 window.closeGame = closeGame;
 window.restartGame = restartGame;
 window.handleSearch = handleSearch;
+window.submitScore = submitScore;
+
+// Enter key on name input submits score
+const _nameInput = document.getElementById('player-name');
+if (_nameInput) {
+  _nameInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') submitScore();
+  });
+}
 
 // Init audio on first user interaction (browser autoplay policy)
 document.addEventListener('click', () => initAudio(), { once: true });

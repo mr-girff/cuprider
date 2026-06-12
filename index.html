@@ -136,6 +136,14 @@
       <div id="game-over-overlay" class="game-over hidden">
         <h2 id="game-over-title">💥 CRASH!</h2>
         <p id="game-over-score">Score: 0</p>
+        <div id="submit-score-area" class="submit-score hidden">
+          <input type="text" id="player-name" class="name-input" placeholder="Your name (optional)" maxlength="20" autocomplete="off"/>
+          <button class="btn-primary btn-small" onclick="submitScore()">🏆 Save Score</button>
+          <div id="leaderboard-mini" class="leaderboard-mini hidden">
+            <p class="lb-mini-title">Top 10</p>
+            <div id="lb-mini-list"></div>
+          </div>
+        </div>
         <button class="btn-primary btn-large" onclick="restartGame()">🔁 Ride Again</button>
         <button class="btn-outline" onclick="closeGame()">Back to Tracks</button>
       </div>

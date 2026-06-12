@@ -1,4 +1,8 @@
 name = "cuprider"
 compatibility_date = "2026-06-12"
-
 pages_build_output_dir = "."
+
+[[kv_namespaces]]
+binding = "CUPRIDER_KV"
+id = "fa17d9110ea44a208fc75ac1e36dd853"
+
